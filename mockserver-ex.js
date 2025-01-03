@@ -44,7 +44,7 @@ const successResponse = {
 app.get('/prefill/v0/phone-numbers/:phoneNumber/check', (req, res) => {
   const { phoneNumber } = req.params;
 
-  console.log(phoneNumber);
+  console.log('phone check: ', phoneNumber);
 
   if (phoneNumber === noProspectCasePhone || phoneNumber === validCasePhone) {
     return res.status(200).json({
@@ -71,7 +71,9 @@ app.get('/prefill/v0/phone-numbers/:phoneNumber/check', (req, res) => {
 // API to request OTP
 app.post('/prefill/v0/mobile-numbers/:phoneNumber/challenge', (req, res) => {
   const { phoneNumber } = req.params;
-  console.log(phoneNumber);
+
+  console.log('send otp: ', phoneNumber);
+
   if (phoneNumber === noProspectCasePhone || phoneNumber === validCasePhone) {
     return res
       .status(202)
@@ -86,7 +88,7 @@ app.post('/prefill/v0/mobile-numbers/:phoneNumber/challenge', (req, res) => {
 app.post('/prefill/v0/prospect/prefill', (req, res) => {
   const { phone, code, birthDate } = req.body;
 
-  console.log('hello');
+  console.log('get user information');
 
   if (code !== validOTP) {
     return res.status(400).json({
@@ -96,10 +98,6 @@ app.post('/prefill/v0/prospect/prefill', (req, res) => {
       },
       result: {},
     });
-  }
-
-  if (validCasePhone === phone) {
-    return res.json(successResponse);
   }
 
   if (phone === noProspectCasePhone && !birthDate) {
@@ -113,7 +111,7 @@ app.post('/prefill/v0/prospect/prefill', (req, res) => {
     });
   }
 
-  if (phone === noProspectCasePhone && birthDate) {
+  if (validCasePhone === phone) {
     return res.json(successResponse);
   }
 });

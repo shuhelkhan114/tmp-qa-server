@@ -10,7 +10,7 @@ const noProspectCasePhone = '+14123453251';
 const validCasePhone = '+14123453252';
 
 const validOTP = '435234';
-const validDate = '03-15-1980';
+const validDate = '1980-03-15';
 
 const noProspectCase = {
   error: {
@@ -96,10 +96,16 @@ app.post('/prefill/v0/mobile-numbers/:phoneNumber/challenge', (req, res) => {
 app.post('/prefill/v0/prospect/prefill', (req, res) => {
   const { phone, code, birthDate } = req.body;
 
-  console.log('hello');
+  console.log(phone, code, validOTP, code !== validOTP);
 
   if (code !== validOTP) {
-    return res.status(400).json(noProspectCase);
+    return res.status(400).json({
+      error: {
+        errorCode: 'INVALID_CODE',
+        errorMessage: 'The verification code provided was invalid',
+      },
+      result: {},
+    });
   }
 
   if (validCasePhone === phone) {
@@ -109,6 +115,8 @@ app.post('/prefill/v0/prospect/prefill', (req, res) => {
   if (phone === noProspectCasePhone && !birthDate) {
     return res.status(404).json(noProspectCase);
   }
+
+  console.log(birthDate, validDate);
 
   if (phone === noProspectCasePhone && birthDate !== validDate) {
     return res.status(404).json(noProspectCase);

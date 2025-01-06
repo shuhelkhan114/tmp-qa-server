@@ -10,6 +10,15 @@ const noProspectCasePhone = '+14123453251';
 const validCasePhone = '+14123453252';
 
 const validOTP = '435234';
+const validDate = '03-15-1980';
+
+const noProspectCase = {
+  error: {
+    errorCode: 'NO_PROSPECT_MATCH',
+    errorMessage: 'No prospect could be found with the information provided',
+  },
+  result: {},
+};
 
 const successResponse = {
   error: {},
@@ -44,8 +53,6 @@ const successResponse = {
 app.get('/prefill/v0/phone-numbers/:phoneNumber/check', (req, res) => {
   const { phoneNumber } = req.params;
 
-  console.log(phoneNumber);
-
   if (phoneNumber === noProspectCasePhone || phoneNumber === validCasePhone) {
     return res.status(200).json({
       error: {},
@@ -71,7 +78,6 @@ app.get('/prefill/v0/phone-numbers/:phoneNumber/check', (req, res) => {
 // API to request OTP
 app.post('/prefill/v0/mobile-numbers/:phoneNumber/challenge', (req, res) => {
   const { phoneNumber } = req.params;
-  console.log(phoneNumber);
   if (phoneNumber === noProspectCasePhone || phoneNumber === validCasePhone) {
     return res
       .status(202)
@@ -89,13 +95,7 @@ app.post('/prefill/v0/prospect/prefill', (req, res) => {
   console.log('hello');
 
   if (code !== validOTP) {
-    return res.status(400).json({
-      error: {
-        errorCode: 'INVALID_CODE',
-        errorMessage: 'The verification code provided was invalid',
-      },
-      result: {},
-    });
+    return res.status(400).json(noProspectCase);
   }
 
   if (validCasePhone === phone) {
@@ -103,17 +103,14 @@ app.post('/prefill/v0/prospect/prefill', (req, res) => {
   }
 
   if (phone === noProspectCasePhone && !birthDate) {
-    return res.status(404).json({
-      error: {
-        errorCode: 'NO_PROSPECT_MATCH',
-        errorMessage:
-          'No prospect could be found with the information provided',
-      },
-      result: {},
-    });
+    return res.status(404).json(noProspectCase);
   }
 
-  if (phone === noProspectCasePhone && birthDate) {
+  if (phone === noProspectCasePhone && birthDate !== validDate) {
+    return res.status(404).json(noProspectCase);
+  }
+
+  if (phone === noProspectCasePhone && birthDate === validDate) {
     return res.json(successResponse);
   }
 });

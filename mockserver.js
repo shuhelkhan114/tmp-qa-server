@@ -49,6 +49,10 @@ const successResponse = {
   },
 };
 
+app.get('/', (req, res) => {
+  return res.status(200).send('server is up & running!!!');
+});
+
 // API to check if the phone number is valid
 app.get('/prefill/v0/phone-numbers/:phoneNumber/check', (req, res) => {
   const { phoneNumber } = req.params;
